@@ -74,16 +74,13 @@ namespace CritterRanchers
 					Stats.UpgradeCosts = saveData.UpgradeCosts ?? Stats.UpgradeCosts;
 					Stats.GlobalCritterProfit = saveData.GlobalCritterProfit;
 					Stats.CritterProfitMultiplier = saveData.CritterProfitMultiplier;
+					Stats.UpgradeAmounts = saveData.UpgradeAmounts ?? Stats.UpgradeAmounts;
 					Fence.FenceSize = saveData.FenceSize;
 
 					foreach (int critterID in saveData.CritterList ?? [])
 					{
 						Critters.SpawnCritter(Critters.GetCritterName(critterID));
 					}
-					ToolTipService.SetToolTip(FenceSizeUpgradeBorder, $"Fence size {Fence.FenceSize} -> {Fence.FenceSize + 1}: ${Stats.Abbreviate(Stats.UpgradeCosts["FenceSize"])}");
-					ToolTipService.SetToolTip(CritterProfitUpgradeBorder, $"Critter Profit +{Stats.Abbreviate(10 * Stats.CritterProfitMultiplier)}% ({Stats.Abbreviate(Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier * 100)}%): ${Stats.Abbreviate(Stats.UpgradeCosts["CritterProfit"])}");
-					ToolTipService.SetToolTip(CritterProfitMultiplierUpgradeBorder, $"Profit Upgrade Multiplier" +
-						$" +1.05x ({Stats.Abbreviate(Stats.CritterProfitMultiplier)}x): ${Stats.Abbreviate(Stats.UpgradeCosts["CritterProfitMultiplier"])}");
 
 					BuildTerrain();
 					Fence.BuildFence();
@@ -168,14 +165,21 @@ namespace CritterRanchers
 						});
 					}
 
-					foreach (KeyValuePair<TextBlock, float> profitText in Critters.ProfitTexts.ToList())
+					try
 					{
-						dispatcher.TryEnqueue(() =>
+						foreach (KeyValuePair<TextBlock, float> profitText in Critters.ProfitTexts.ToList())
 						{
-							try
+							dispatcher.TryEnqueue(() =>
 							{
 								Canvas.SetTop(profitText.Key, Canvas.GetTop(profitText.Key) - (4f - profitText.Value));
-								Critters.ProfitTexts[profitText.Key] += 1f / 15f;
+								try
+								{
+									Critters.ProfitTexts[profitText.Key] += 1f / 15f;
+								}
+								catch (KeyNotFoundException)
+								{
+									System.Diagnostics.Debug.WriteLine("Profit text already gone!");
+								}
 								Color currentColor = ((SolidColorBrush)profitText.Key.Foreground).Color;
 								profitText.Key.Foreground = new SolidColorBrush(Color.FromArgb((byte)(255f - (255f * profitText.Value / 4f)), currentColor.R, currentColor.G, currentColor.B));
 
@@ -184,16 +188,12 @@ namespace CritterRanchers
 									App.Window?.BackgroundCanvas.Children.Remove(profitText.Key);
 									Critters.ProfitTexts.Remove(profitText.Key);
 								}
-							}
-							catch (IndexOutOfRangeException)
-							{
-								System.Diagnostics.Debug.WriteLine("Profit text already gone!");
-							}
-							catch (KeyNotFoundException)
-							{
-								System.Diagnostics.Debug.WriteLine("Profit text already gone!");
-							}
-						});
+							});
+						}
+					}
+					catch (ArgumentException)
+					{
+						System.Diagnostics.Debug.Write("Failed to loop profit texts! Retrying..");
 					}
 
 					await Save.SaveUserData();
@@ -214,6 +214,7 @@ namespace CritterRanchers
 					UriSource = new Uri("ms-appx:///Assets/Critters/" + critterName + ".png")
 				};
 				int critterID = Critters.GetCritterID(critterName);
+
 				CritterIcon.Source = critter;
 				CritterName.Text = critterName;
 				CritterCost.Text = "costs $" + Stats.Abbreviate(Stats.CritterCosts[critterID]);
@@ -297,7 +298,8 @@ namespace CritterRanchers
 
 					Canvas.SetLeft(FenceSizeUpgradeBorder, Fence.XBound.X - 105);
 					Canvas.SetTop(FenceSizeUpgradeBorder, Fence.YBound.Y - 5);
-					ToolTipService.SetToolTip(FenceSizeUpgradeBorder, $"Fence size {Fence.FenceSize} -> {Fence.FenceSize + 1}: ${Stats.Abbreviate(Stats.UpgradeCosts["FenceSize"])}");
+
+					Button_Highlighted(sender, new RoutedEventArgs());
 				}
 			}
 		}
@@ -313,7 +315,8 @@ namespace CritterRanchers
 					Stats.Money -= Stats.UpgradeCosts["CritterProfit"];
 					Stats.GlobalCritterProfit += 0.1d;
 					Stats.UpgradeCosts["CritterProfit"] *= 1.5;
-					ToolTipService.SetToolTip(CritterProfitUpgradeBorder, $"Critter Profit +{Stats.Abbreviate(10 * Stats.CritterProfitMultiplier)}% ({Stats.Abbreviate(Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier * 100)}%): ${Stats.Abbreviate(Stats.UpgradeCosts["CritterProfit"])}");
+
+					Button_Highlighted(sender, new RoutedEventArgs());
 				}
 			}
 		}
@@ -329,10 +332,50 @@ namespace CritterRanchers
 					Stats.Money -= Stats.UpgradeCosts["CritterProfitMultiplier"];
 					Stats.CritterProfitMultiplier += 0.05d;
 					Stats.UpgradeCosts["CritterProfitMultiplier"] *= 2;
-					ToolTipService.SetToolTip(CritterProfitUpgradeBorder, $"Critter Profit +{Stats.Abbreviate(10 * Stats.CritterProfitMultiplier)}% ({Stats.Abbreviate(Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier * 100)}%): ${Stats.Abbreviate(Stats.UpgradeCosts["CritterProfit"])}");
-					ToolTipService.SetToolTip(CritterProfitMultiplierUpgradeBorder, $"Profit Multiplier + 1.05x ({Stats.Abbreviate(Stats.CritterProfitMultiplier)}x): ${Stats.Abbreviate(Stats.UpgradeCosts["CritterProfitMultiplier"])}");
+
+					Button_Highlighted(sender, new RoutedEventArgs());
 				}
 			}
+		}
+
+		private void Button_Highlighted(object sender, RoutedEventArgs e)
+		{
+			string key = "";
+			DetailsBorder.Visibility = Visibility.Visible;
+			switch (((FrameworkElement)sender).Name)
+			{
+				case "FenceSizeUpgradeButton":
+					UpgradeTitle.Text = "Fence Size Upgrade";
+					key = "FenceSize";
+					UpgradeDescriptionText.Text = $"Increases fence size from " +
+						$"{Fence.FenceSize}" +
+						$" to " +
+						$"{Fence.FenceSize + 1}";
+					break;
+				case "CritterProfitUpgradeButton":
+					UpgradeTitle.Text = "Critter Profit Upgrade";
+					key = "CritterProfit";
+					UpgradeDescriptionText.Text = $"Critters produce " +
+						$"{Stats.Abbreviate(Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier * 100)}" +
+						$"% money (+" +
+						$"{Stats.Abbreviate(Stats.CritterProfitMultiplier * 10)}" +
+						$"% per level)";
+					break;
+				case "CritterProfitMultiplierUpgradeButton":
+					UpgradeTitle.Text = "Critter Profit Upgrade Multiplier";
+					key = "CritterProfitMultiplier";
+					UpgradeDescriptionText.Text = $"Critter Profit Upgrade boost is multiplied by " +
+						$"{Stats.Abbreviate(Stats.CritterProfitMultiplier)}" +
+						$"x (+1.05x per level)";
+					break;
+			}
+			UpgradeLimitText.Text = $"owned {Stats.UpgradeAmounts[key][0]}/{Stats.UpgradeAmounts[key][1]}";
+			UpgradeCostText.Text = $"costs ${Stats.Abbreviate(Stats.UpgradeCosts[key])}";
+		}
+
+		private void Button_Unhighlighted(object sender, RoutedEventArgs e)
+		{
+			DetailsBorder.Visibility = Visibility.Collapsed;
 		}
 	}
 }

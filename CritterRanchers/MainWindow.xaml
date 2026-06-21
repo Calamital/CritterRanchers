@@ -21,10 +21,11 @@
 					Width="40"
 					Height="40"
 					Canvas.ZIndex="50"
-					Padding="2.5,2.5,2.5,2.5"
-					ToolTipService.Placement="Left">
+					Padding="2.5,2.5,2.5,2.5">
 				<Button x:Name="FenceSizeUpgradeButton"
 						Click="FenceSize_Click"
+						PointerEntered="Button_Highlighted"
+						PointerExited="Button_Unhighlighted"
 						Width="35"
 						Height="35"
 						Padding="0,0,0,0"
@@ -39,10 +40,11 @@
 					Width="40"
 					Height="40"
 					Canvas.ZIndex="50"
-					Padding="2.5,2.5,2.5,2.5"
-					ToolTipService.Placement="Bottom">
+					Padding="2.5,2.5,2.5,2.5">
 				<Button x:Name="CritterProfitUpgradeButton"
 						Click="CritterProfit_Click"
+						PointerEntered="Button_Highlighted"
+						PointerExited="Button_Unhighlighted"
 						Width="35"
 						Height="35"
 						Padding="0,0,0,0"
@@ -57,10 +59,11 @@
 					Width="40"
 					Height="40"
 					Canvas.ZIndex="50"
-					Padding="2.5,2.5,2.5,2.5"
-					ToolTipService.Placement="Bottom">
+					Padding="2.5,2.5,2.5,2.5">
 				<Button x:Name="CritterProfitMultiplierUpgradeButton"
 						Click="CritterProfitMultiplier_Click"
+						PointerEntered="Button_Highlighted"
+						PointerExited="Button_Unhighlighted"
 						Width="35"
 						Height="35"
 						Padding="0,0,0,0"
@@ -68,6 +71,63 @@
 					<Image Source="ms-appx:///Assets/CritterProfitMultiplierButton.png"
 			               Stretch="Fill"></Image>
 				</Button>
+			</Border>
+
+			<Border x:Name="DetailsBorder"
+					Width="700"
+					Height="60"
+					Visibility="Collapsed"
+					Canvas.Left="450"
+					Canvas.Top="885"
+					Canvas.ZIndex="50"
+					Padding="0,0,0,0"
+					Background="#2B2B2B">
+				<Canvas x:Name="DetailsCanvas">
+					<TextBlock x:Name="UpgradeTitle"
+							   Text="Upgrade Name"
+							   FontFamily="Arial"
+							   FontSize="18"
+							   Canvas.Top="0"
+							   Canvas.Left="0"
+							   Width="300"
+							   FontWeight="Bold"
+							   TextAlignment="Center"
+							   Height="30"></TextBlock>
+					<TextBlock x:Name="UpgradeLimitText"
+							   Text="owned 0/100"
+							   FontFamily="Arial"
+							   FontSize="14"
+							   FontStyle="Italic"
+							   Canvas.Top="22.5"
+							   Canvas.Left="0"
+							   Width="300"
+							   TextAlignment="Center"
+							   Height="20"></TextBlock>
+					<TextBlock x:Name="UpgradeCostText"
+							   Text="costs $0"
+							   FontFamily="Arial"
+							   FontSize="14"
+							   FontStyle="Italic"
+							   Canvas.Top="40"
+							   Canvas.Left="0"
+							   Width="300"
+							   TextAlignment="Center"
+							   Height="20"></TextBlock>
+					<Border x:Name="DescriptionBorder"
+							Width="400"
+							Height="60"
+							Canvas.Left="300"
+							Canvas.Top="0"
+							Canvas.ZIndex="50"
+							Padding="10,10,10,10"
+							Background="#3B3B3B">
+						<TextBlock x:Name="UpgradeDescriptionText"
+								   FontFamily="Arial"
+								   FontSize="14"
+								   Text="Increases fence size from 8 to 9."
+								   TextWrapping="Wrap"></TextBlock>
+					</Border>
+				</Canvas>
 			</Border>
 
 			<Border x:Name="MoneyBlock"
@@ -225,6 +285,11 @@
 							<MenuFlyoutItem Text="Slemmy" Width="300" Click="SelectCritter_Click">
 								<MenuFlyoutItem.Icon>
 									<ImageIcon Source="ms-appx:///Assets/Critters/Slemmy.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Schloop" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Schloop.png"></ImageIcon>
 								</MenuFlyoutItem.Icon>
 							</MenuFlyoutItem>
 						</MenuFlyout>

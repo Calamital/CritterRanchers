@@ -26,6 +26,7 @@ namespace CritterRanchers
 				4 => Color.FromArgb(255, 163, 113, 42),
 				5 => Color.FromArgb(255, 209, 46, 196),
 				6 => Color.FromArgb(255, 159, 129, 46),
+				7 => Color.FromArgb(255, 142, 52, 128),
 				_ => Color.FromArgb(255, 0, 0, 0)
 			};
 		}
@@ -40,6 +41,7 @@ namespace CritterRanchers
 				"Trummer" => 4,
 				"Gerby" => 5,
 				"Slemmy" => 6,
+				"Schloop" => 7,
 				_ => -1
 			};
         }
@@ -55,6 +57,7 @@ namespace CritterRanchers
 				4 => "Trummer",
 				5 => "Gerby",
 				6 => "Slemmy",
+				7 => "Schloop",
 				_ => ""
 			};
 		}
@@ -70,6 +73,7 @@ namespace CritterRanchers
 				"Trummer" => 75,
 				"Gerby" => 45,
 				"Slemmy" => 50,
+				"Schloop" => 55,
 				_ => 0
 			};
 			double theta = Math.PI + (new Random().Next(360) * Math.PI / 180d);

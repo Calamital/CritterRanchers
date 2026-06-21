@@ -19,7 +19,8 @@ namespace CritterRanchers
 			900d,
 			2500d,
 			10000d,
-			40000d
+			40000d,
+			2500000d
 		];
 		public static double[] CritterMoney =
 		[
@@ -29,7 +30,8 @@ namespace CritterRanchers
 			45d,
 			120d,
 			800d,
-			1800d
+			1800d,
+			90000d
 		];
 		public static Dictionary<string, double> UpgradeCosts = new()
 		{
