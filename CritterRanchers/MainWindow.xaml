@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window
+    x:Class="CritterRanchers.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CritterRanchers"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="CritterRanchers">
+
+	<Window.SystemBackdrop>
+		<MicaBackdrop />
+	</Window.SystemBackdrop>
+	<Grid>
+		<Canvas x:Name="CanvasBackground"
+	Background="DarkGreen">
+
+			<Border x:Name="FenceSizeUpgradeBorder"
+					Background="#2B2B2B"
+					Width="40"
+					Height="40"
+					Canvas.ZIndex="50"
+					Padding="2.5,2.5,2.5,2.5"
+					ToolTipService.Placement="Left">
+				<Button x:Name="FenceSizeUpgradeButton"
+						Click="FenceSize_Click"
+						Width="35"
+						Height="35"
+						Padding="0,0,0,0"
+						Background="#6B4B2B">
+					<Image Source="ms-appx:///Assets/FenceSizeButton.png"
+			               Stretch="Fill"></Image>
+				</Button>
+			</Border>
+
+			<Border x:Name="CritterProfitUpgradeBorder"
+					Background="#2B2B2B"
+					Width="40"
+					Height="40"
+					Canvas.ZIndex="50"
+					Padding="2.5,2.5,2.5,2.5"
+					ToolTipService.Placement="Bottom">
+				<Button x:Name="CritterProfitUpgradeButton"
+						Click="CritterProfit_Click"
+						Width="35"
+						Height="35"
+						Padding="0,0,0,0"
+						Background="#2B6B2B">
+					<Image Source="ms-appx:///Assets/CritterProfitButton.png"
+						   Stretch="Fill"></Image>
+				</Button>
+			</Border>
+
+			<Border x:Name="CritterProfitMultiplierUpgradeBorder"
+					Background="#2B2B2B"
+					Width="40"
+					Height="40"
+					Canvas.ZIndex="50"
+					Padding="2.5,2.5,2.5,2.5"
+					ToolTipService.Placement="Bottom">
+				<Button x:Name="CritterProfitMultiplierUpgradeButton"
+						Click="CritterProfitMultiplier_Click"
+						Width="35"
+						Height="35"
+						Padding="0,0,0,0"
+						Background="#2B8B2B">
+					<Image Source="ms-appx:///Assets/CritterProfitMultiplierButton.png"
+			               Stretch="Fill"></Image>
+				</Button>
+			</Border>
+
+			<Border x:Name="MoneyBlock"
+		Canvas.ZIndex="10"
+		Background="#2B2B2B"
+		Canvas.Top="40"
+		Canvas.Left="400"
+		Width="800"
+		Height="60"
+		Padding="0,10,0,10">
+				<TextBlock x:Name="MoneyText"
+			   Text="$0"
+			   Foreground="White"
+			   FontSize="40"
+			   TextAlignment="Center"
+			   FontFamily="Arial"></TextBlock>
+			</Border>
+
+			<Border x:Name="CritterLimitBlock"
+		Canvas.ZIndex="10"
+		Background="#2B2B6B"
+		Canvas.Top="120"
+		Canvas.Left="400"
+		Width="250"
+		Height="40"
+		Padding="0,10,0,10">
+				<TextBlock x:Name="CritterLimitText"
+			   Text="Critters: 0/0"
+			   Foreground="White"
+			   FontSize="20"
+			   TextAlignment="Center"
+			   FontFamily="Arial"></TextBlock>
+			</Border>
+
+			<Border x:Name="CritterOptions"
+		Canvas.ZIndex="10"
+		Height="300"
+		Width="300"
+		Background="#2B2B2B"
+		Canvas.Top="40"
+		Canvas.Left="50">
+				<Canvas>
+					<Image x:Name="CritterIcon"
+			   Width="100"
+			   Height="100"
+			   Canvas.Left="100"
+			   Canvas.Top="0"></Image>
+					<Border Background="#3B3B3B"
+				Height="20"
+				Width="300"
+				Canvas.Top="105"
+				Canvas.Left="0">
+						<TextBlock x:Name="CritterName"
+					   Text="None"
+					   FontFamily="Arial"
+					   FontSize="20"
+					   TextAlignment="Center"
+					   Foreground="White"/>
+					</Border>
+					<TextBlock x:Name="CritterCost"
+			       Text="costs $0"
+			       FontFamily="Arial"
+			       FontSize="30"
+			       TextAlignment="Center"
+			       Canvas.Left="0"
+			       Canvas.Top="145"
+			       Width="300"
+			       Height="30"
+			       Foreground="White"/>
+					<TextBlock x:Name="CritterProduction"
+		           Text="makes +$0/s"
+		           FontFamily="Arial"
+		           FontSize="20"
+		           TextAlignment="Center"
+		           Canvas.Left="0"
+		           Canvas.Top="185"
+		           Width="300"
+		           Height="30"
+		           Foreground="White"/>
+					<Button x:Name="BuyCritter"
+				Click="BuyCritter_Click"
+				Content="Purchase"
+				FontFamily="Arial"
+				FontSize="18"
+				Canvas.Left="50"
+				Canvas.Top="220"
+				Width="200"
+				Height="30"
+				Foreground="White"
+				CornerRadius="0"/>
+					<Button x:Name="DeleteCritter"
+				Click="DeleteCritter_Click"
+				Content="Delete x1"
+				FontFamily="Arial"
+				FontSize="18"
+				Canvas.Left="50"
+				Canvas.Top="250"
+				Width="200"
+				Height="30"
+				Background="#6B2B2B"
+				Foreground="White"
+				CornerRadius="0"/>
+				</Canvas>
+			</Border>
+
+			<Border x:Name="CritterBlock"
+		Canvas.ZIndex="10"
+		Height="30"
+		Width="300"
+		Canvas.Left="50"
+		Canvas.Top="355"
+		Background="#2B2B2B">
+				<DropDownButton x:Name="CritterSelect"
+					FontFamily="Arial"
+					Content="Select a Critter"
+					Width="300">
+					<DropDownButton.Flyout>
+						<MenuFlyout Placement="Bottom">
+							<MenuFlyout.MenuFlyoutPresenterStyle>
+								<Style TargetType="MenuFlyoutPresenter">
+									<Setter Property="CornerRadius" Value="0"/>
+									<Setter Property="FontFamily" Value="Arial"/>
+								</Style>
+							</MenuFlyout.MenuFlyoutPresenterStyle>
+							<MenuFlyoutItem Text="Scrant" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Scrant.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Frimbus" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Frimbus.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Herbert" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Herbert.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Blingott" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Blingott.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Trummer" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Trummer.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Gerby" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Gerby.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+							<MenuFlyoutItem Text="Slemmy" Width="300" Click="SelectCritter_Click">
+								<MenuFlyoutItem.Icon>
+									<ImageIcon Source="ms-appx:///Assets/Critters/Slemmy.png"></ImageIcon>
+								</MenuFlyoutItem.Icon>
+							</MenuFlyoutItem>
+						</MenuFlyout>
+					</DropDownButton.Flyout>
+				</DropDownButton>
+			</Border>
+		</Canvas>
+	</Grid>
+
+</Window>
