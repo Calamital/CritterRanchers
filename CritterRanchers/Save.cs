@@ -22,8 +22,6 @@ namespace CritterRanchers
                 CritterMoney = Stats.CritterMoney,
                 CritterList = Critters.CritterIDs,
                 UpgradeCosts = Stats.UpgradeCosts,
-                GlobalCritterProfit = Stats.GlobalCritterProfit,
-                CritterProfitMultiplier = Stats.CritterProfitMultiplier,
 				UpgradeAmounts = Stats.UpgradeAmounts,
 				FenceSize = Fence.FenceSize
             };
@@ -49,13 +47,11 @@ namespace CritterRanchers
 
             Data saveData = new()
             {
-                Money = 100000000000000000000000000000000000000000000000000000000000000d,
+                Money = 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d,
                 MaxCritters = 14,
                 CritterCosts = Stats.CritterCosts,
                 CritterMoney = Stats.CritterMoney,
                 CritterList = [],
-                GlobalCritterProfit = 1,
-                CritterProfitMultiplier = 1,
                 UpgradeAmounts = Stats.UpgradeAmounts,
                 FenceSize = 8
             };

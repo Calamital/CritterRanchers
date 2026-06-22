@@ -22,6 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Assets\CritterProfitMultiplierButton.png" />
+    <None Remove="Assets\MaxCritterButton.png" />
   </ItemGroup>
 
   <ItemGroup>

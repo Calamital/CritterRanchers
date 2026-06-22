@@ -14,8 +14,6 @@ namespace CritterRanchers
         public double[]? CritterMoney { get; set; }
         public List<int>? CritterList { get; set; }
         public Dictionary<string, double>? UpgradeCosts { get; set; }
-        public double GlobalCritterProfit { get; set; }
-        public double CritterProfitMultiplier { get; set; }
         public Dictionary<string, double[]>? UpgradeAmounts { get; set; }
         public int FenceSize { get; set; }
 	}

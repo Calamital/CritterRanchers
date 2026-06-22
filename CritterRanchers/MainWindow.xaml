@@ -73,6 +73,44 @@
 				</Button>
 			</Border>
 
+			<Border x:Name="CritterCooldownUpgradeBorder"
+		Background="#2B2B2B"
+		Width="40"
+		Height="40"
+		Canvas.ZIndex="50"
+		Padding="2.5,2.5,2.5,2.5">
+				<Button x:Name="CritterCooldownUpgradeButton"
+			Click="CritterCooldown_Click"
+			PointerEntered="Button_Highlighted"
+			PointerExited="Button_Unhighlighted"
+			Width="35"
+			Height="35"
+			Padding="0,0,0,0"
+			Background="#2B2B6B">
+					<Image Source="ms-appx:///Assets/CritterCooldownButton.png"
+               Stretch="Fill"></Image>
+				</Button>
+			</Border>
+
+			<Border x:Name="MaxCritterUpgradeBorder"
+		Background="#2B2B2B"
+		Width="40"
+		Height="40"
+		Canvas.ZIndex="50"
+		Padding="2.5,2.5,2.5,2.5">
+				<Button x:Name="MaxCritterUpgradeButton"
+			Click="MaxCritter_Click"
+			PointerEntered="Button_Highlighted"
+			PointerExited="Button_Unhighlighted"
+			Width="35"
+			Height="35"
+			Padding="0,0,0,0"
+			Background="#6B2B2B">
+					<Image Source="ms-appx:///Assets/MaxCritterButton.png"
+               Stretch="Fill"></Image>
+				</Button>
+			</Border>
+
 			<Border x:Name="DetailsBorder"
 					Width="700"
 					Height="60"

@@ -98,10 +98,13 @@ namespace CritterRanchers
 				}
 			}
 
-			Position -= (float)Math.Max(0.2, distanceToFence) * (float)Math.Min(1 + (LastBounceTime / 5), 1.2) * Speed * Direction / 2f;
+			Position -= (ID == 7 ? MathF.Pow(MathF.Cos(LastBounceTime * MathF.PI), 2) : 1) * (float)Math.Max(0.2, distanceToFence) * (float)Math.Min(1 + (LastBounceTime / 5), 1.2) * Speed * Direction / 2f;
 
-			Direction += (1 - distanceToFence) * new Vector2(Direction.Y, -Direction.X) * (0.5f + Math.Min(1, LastBounceTime)) * Speed / (MathF.Max(1, (Fence.FenceSize - 8) / 4) * (rng + 2000f));
-			Direction /= Direction.Length();
+			if (LastBounceTime >= 0.2f)
+			{
+				Direction += 1.25f * (1 - (distanceToFence * distanceToFence)) * new Vector2(Direction.Y, -Direction.X) * (0.5f + Math.Min(1, LastBounceTime)) * Speed / (MathF.Max(1, (Fence.FenceSize - 8) / 4) * (rng + 2000f));
+				Direction /= Direction.Length();
+			}
 
 			try
 			{
@@ -110,7 +113,7 @@ namespace CritterRanchers
 			}
 			catch { }
 
-			if (DeltaTime >= 1)
+			if (DeltaTime >= 1 - Stats.CritterCooldownReduction)
 			{
 				DeltaTime = 0;
 				Stats.Money += Stats.CritterMoney[ID] * Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier;

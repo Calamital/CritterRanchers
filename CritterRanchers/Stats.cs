@@ -11,6 +11,8 @@ namespace CritterRanchers
 		public static int CritterCount = 0;
 		public static double GlobalCritterProfit = 1d;
 		public static double CritterProfitMultiplier = 1d;
+		public static double CritterCooldownReduction = 0d;
+		public static int MaxCrittersIncrease = 0;
 		public static double[] CritterCosts =
 		[
 			1d,
@@ -37,13 +39,17 @@ namespace CritterRanchers
 		{
 			["FenceSize"] = 5000d,
 			["CritterProfit"] = 5d,
-			["CritterProfitMultiplier"] = 1000d
+			["CritterProfitMultiplier"] = 1000d,
+			["CritterCooldown"] = 300d,
+			["MaxCritter"] = 10d
 		};
 		public static Dictionary<string, double[]> UpgradeAmounts = new()
 		{
 			["FenceSize"] = [0d, 8d],
 			["CritterProfit"] = [0d, 500d],
-			["CritterProfitMultiplier"] = [0d, 500d]
+			["CritterProfitMultiplier"] = [0d, 500d],
+			["CritterCooldown"] = [0d, 20d],
+			["MaxCritter"] = [0d, 25d]
 		};
 
 		public static string Abbreviate(double n)
@@ -53,7 +59,7 @@ namespace CritterRanchers
 				return Math.Round(n, 2).ToString();
 			}
 
-			string abbreviations = "K,M,B,T,Qd,Qn,Sx,Sp,Oc,No,Dc,Ud,Dd,Td,QdD,QnD,SxD,SpD,OcD,NvD,Vt";
+			string abbreviations = "K,M,B,T,Qd,Qn,Sx,Sp,Oc,No,Dc,Ud,Dd,Td,QdD,QnD,SxD,SpD,OcD,NvD,Vt,UVt,DVt,TVt,QdVt,QnVt,SxVt,SpVt,OcVt,NvVt,Tt";
 			int exponent = (int)Math.Floor(Math.Log10(n) / 3) - 1;
 			return Math.Round(n / Math.Pow(1000, exponent + 1), 2) + abbreviations.Split(",")[exponent];
 		}

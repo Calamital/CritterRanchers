@@ -72,8 +72,6 @@ namespace CritterRanchers
 					Stats.CritterCosts = saveData.CritterCosts ?? Stats.CritterCosts;
 					Stats.CritterMoney = saveData.CritterMoney ?? Stats.CritterMoney;
 					Stats.UpgradeCosts = saveData.UpgradeCosts ?? Stats.UpgradeCosts;
-					Stats.GlobalCritterProfit = saveData.GlobalCritterProfit;
-					Stats.CritterProfitMultiplier = saveData.CritterProfitMultiplier;
 					Stats.UpgradeAmounts = saveData.UpgradeAmounts ?? Stats.UpgradeAmounts;
 					Fence.FenceSize = saveData.FenceSize;
 
@@ -84,16 +82,27 @@ namespace CritterRanchers
 
 					BuildTerrain();
 					Fence.BuildFence();
-
-					Canvas.SetLeft(FenceSizeUpgradeBorder, Fence.XBound.X - 105);
-					Canvas.SetTop(FenceSizeUpgradeBorder, Fence.YBound.Y - 5);
-					Canvas.SetLeft(CritterProfitUpgradeBorder, Fence.XBound.X - 60);
-					Canvas.SetTop(CritterProfitUpgradeBorder, Fence.YBound.Y + 45);
-					Canvas.SetLeft(CritterProfitMultiplierUpgradeBorder, Fence.XBound.X - 20);
-					Canvas.SetTop(CritterProfitMultiplierUpgradeBorder, Fence.YBound.Y + 45);
+					SetPositions();
 
 					await Task.Run(() => UpdateCritters(DispatcherQueue, cancelToken.Token));
 				}
+			});
+		}
+
+		private void SetPositions()
+		{
+			DispatcherQueue.TryEnqueue(() =>
+			{
+				Canvas.SetLeft(FenceSizeUpgradeBorder, Fence.XBound.X - 105);
+				Canvas.SetTop(FenceSizeUpgradeBorder, Fence.YBound.Y);
+				Canvas.SetLeft(MaxCritterUpgradeBorder, Fence.XBound.X - 105);
+				Canvas.SetTop(MaxCritterUpgradeBorder, Fence.YBound.Y - 40);
+				Canvas.SetLeft(CritterProfitUpgradeBorder, Fence.XBound.X - 60);
+				Canvas.SetTop(CritterProfitUpgradeBorder, Fence.YBound.Y + 45);
+				Canvas.SetLeft(CritterProfitMultiplierUpgradeBorder, Fence.XBound.X - 20);
+				Canvas.SetTop(CritterProfitMultiplierUpgradeBorder, Fence.YBound.Y + 45);
+				Canvas.SetLeft(CritterCooldownUpgradeBorder, Fence.XBound.Y);
+				Canvas.SetTop(CritterCooldownUpgradeBorder, Fence.YBound.Y + 45);
 			});
 		}
 
@@ -148,11 +157,15 @@ namespace CritterRanchers
 		private void OnCompositionTargetRendering(object? sender, object e)
 		{
 			MoneyText.Text = "$" + Stats.Abbreviate(Stats.Money);
-			CritterLimitText.Text = "Critters: " + Stats.CritterCount + "/" + Stats.MaxCritters;
+			CritterLimitText.Text = "Critters: " + Stats.CritterCount + "/" + (Stats.MaxCritters + Stats.MaxCrittersIncrease);
 		}
 
 		private static async Task UpdateCritters(Microsoft.UI.Dispatching.DispatcherQueue dispatcher, CancellationToken cancel)
 		{
+			Stats.GlobalCritterProfit = 1 + (Stats.UpgradeAmounts["CritterProfit"][0] / 10d);
+			Stats.CritterProfitMultiplier = 1 + (Stats.UpgradeAmounts["CritterProfitMultiplier"][0] / 20d);
+			Stats.CritterCooldownReduction = Stats.UpgradeAmounts["CritterCooldown"][0] / 50d;
+			Stats.MaxCrittersIncrease = (int)Stats.UpgradeAmounts["MaxCritter"][0];
 			try
 			{
 				while (!cancel.IsCancellationRequested)
@@ -232,7 +245,7 @@ namespace CritterRanchers
 
 			int critterID = Critters.GetCritterID(SelectedCritter);
 
-			if ((Stats.Money >= Stats.CritterCosts[critterID]) && (Stats.MaxCritters > Stats.CritterCount))
+			if ((Stats.Money >= Stats.CritterCosts[critterID]) && (Stats.MaxCritters + Stats.MaxCrittersIncrease > Stats.CritterCount))
 			{
 				Stats.Money -= Stats.CritterCosts[critterID];
 				Stats.CritterCosts[critterID] *= 1.3d;
@@ -289,15 +302,7 @@ namespace CritterRanchers
 					Stats.UpgradeCosts["FenceSize"] *= 100;
 					Fence.FenceSize++;
 					Fence.BuildFence();
-
-					Canvas.SetLeft(CritterProfitMultiplierUpgradeBorder, Fence.XBound.X - 20);
-					Canvas.SetTop(CritterProfitMultiplierUpgradeBorder, Fence.YBound.Y + 45);
-
-					Canvas.SetLeft(CritterProfitUpgradeBorder, Fence.XBound.X - 60);
-					Canvas.SetTop(CritterProfitUpgradeBorder, Fence.YBound.Y + 45);
-
-					Canvas.SetLeft(FenceSizeUpgradeBorder, Fence.XBound.X - 105);
-					Canvas.SetTop(FenceSizeUpgradeBorder, Fence.YBound.Y - 5);
+					SetPositions();
 
 					Button_Highlighted(sender, new RoutedEventArgs());
 				}
@@ -330,8 +335,42 @@ namespace CritterRanchers
 					Stats.UpgradeAmounts["CritterProfitMultiplier"][0]++;
 
 					Stats.Money -= Stats.UpgradeCosts["CritterProfitMultiplier"];
-					Stats.CritterProfitMultiplier += 0.05d;
-					Stats.UpgradeCosts["CritterProfitMultiplier"] *= 2;
+					Stats.CritterProfitMultiplier += 0.25d;
+					Stats.UpgradeCosts["CritterProfitMultiplier"] *= 1.4;
+
+					Button_Highlighted(sender, new RoutedEventArgs());
+				}
+			}
+		}
+
+		private void CritterCooldown_Click(object sender, RoutedEventArgs e)
+		{
+			if (Stats.Money >= Stats.UpgradeCosts["CritterCooldown"])
+			{
+				if (Stats.UpgradeAmounts["CritterCooldown"][0] < Stats.UpgradeAmounts["CritterCooldown"][1])
+				{
+					Stats.UpgradeAmounts["CritterCooldown"][0]++;
+
+					Stats.Money -= Stats.UpgradeCosts["CritterCooldown"];
+					Stats.CritterCooldownReduction += 0.02d;
+					Stats.UpgradeCosts["CritterCooldown"] *= 2.5;
+
+					Button_Highlighted(sender, new RoutedEventArgs());
+				}
+			}
+		}
+
+		private void MaxCritter_Click(object sender, RoutedEventArgs e)
+		{
+			if (Stats.Money >= Stats.UpgradeCosts["MaxCritter"])
+			{
+				if (Stats.UpgradeAmounts["MaxCritter"][0] < Stats.UpgradeAmounts["MaxCritter"][1])
+				{
+					Stats.UpgradeAmounts["MaxCritter"][0]++;
+
+					Stats.Money -= Stats.UpgradeCosts["MaxCritter"];
+					Stats.MaxCrittersIncrease += 1;
+					Stats.UpgradeCosts["MaxCritter"] *= 10;
 
 					Button_Highlighted(sender, new RoutedEventArgs());
 				}
@@ -366,7 +405,19 @@ namespace CritterRanchers
 					key = "CritterProfitMultiplier";
 					UpgradeDescriptionText.Text = $"Critter Profit Upgrade boost is multiplied by " +
 						$"{Stats.Abbreviate(Stats.CritterProfitMultiplier)}" +
-						$"x (+1.05x per level)";
+						$"x (+1.25x per level)";
+					break;
+				case "CritterCooldownUpgradeButton":
+					UpgradeTitle.Text = "Critter Cooldown Reduction";
+					key = "CritterCooldown";
+					UpgradeDescriptionText.Text = $"Reduces the cooldown between critter profits by 0.02s per level " +
+						$"(-{Stats.Abbreviate(Stats.CritterCooldownReduction)}s)";
+					break;
+				case "MaxCritterUpgradeButton":
+					UpgradeTitle.Text = "Max Critters Increase";
+					key = "MaxCritter";
+					UpgradeDescriptionText.Text = $"Increases the amount of critters you can have in your fence by 1 " +
+						$"(+{Stats.Abbreviate(Stats.MaxCrittersIncrease)} max critters)";
 					break;
 			}
 			UpgradeLimitText.Text = $"owned {Stats.UpgradeAmounts[key][0]}/{Stats.UpgradeAmounts[key][1]}";
