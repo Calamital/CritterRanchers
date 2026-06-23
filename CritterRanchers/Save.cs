@@ -34,10 +34,14 @@ namespace CritterRanchers
                 Directory.CreateDirectory(critterRanchersPath);
             }
 
+            string tempPath = Path.GetTempFileName();
             string storage = Path.Combine(critterRanchersPath, "stats.json");
 
             string JSON = JsonSerializer.Serialize(saveData);
-            await File.WriteAllTextAsync(storage, JSON);
+            await File.WriteAllTextAsync(tempPath, JSON);
+
+            File.Copy(tempPath, storage, true);
+            File.Delete(tempPath);
         }
 
         public static async Task<Data> LoadUserData()
@@ -47,7 +51,7 @@ namespace CritterRanchers
 
             Data saveData = new()
             {
-                Money = 10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d,
+                Money = 1d,
                 MaxCritters = 14,
                 CritterCosts = Stats.CritterCosts,
                 CritterMoney = Stats.CritterMoney,
