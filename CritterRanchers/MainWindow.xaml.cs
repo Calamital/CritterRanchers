@@ -156,16 +156,16 @@ namespace CritterRanchers
 
 		private void OnCompositionTargetRendering(object? sender, object e)
 		{
+			Stats.GlobalCritterProfit = 1 + (Stats.UpgradeAmounts["CritterProfit"][0] * 0.1d);
+			Stats.CritterProfitMultiplier = 1 + (Stats.UpgradeAmounts["CritterProfitMultiplier"][0] * 0.25d);
+			Stats.CritterCooldownReduction = Stats.UpgradeAmounts["CritterCooldown"][0] * 0.02d;
+			Stats.MaxCrittersIncrease = (int)Stats.UpgradeAmounts["MaxCritter"][0];
 			MoneyText.Text = "$" + Stats.Abbreviate(Stats.Money);
 			CritterLimitText.Text = "Critters: " + Stats.CritterCount + "/" + (Stats.MaxCritters + Stats.MaxCrittersIncrease);
 		}
 
 		private static async Task UpdateCritters(Microsoft.UI.Dispatching.DispatcherQueue dispatcher, CancellationToken cancel)
 		{
-			Stats.GlobalCritterProfit = 1 + (Stats.UpgradeAmounts["CritterProfit"][0] * 0.1d);
-			Stats.CritterProfitMultiplier = 1 + (Stats.UpgradeAmounts["CritterProfitMultiplier"][0] * 0.25d);
-			Stats.CritterCooldownReduction = Stats.UpgradeAmounts["CritterCooldown"][0] * 0.02d;
-			Stats.MaxCrittersIncrease = (int)Stats.UpgradeAmounts["MaxCritter"][0];
 			try
 			{
 				while (!cancel.IsCancellationRequested)
@@ -373,7 +373,6 @@ namespace CritterRanchers
 					Stats.UpgradeAmounts["MaxCritter"][0]++;
 
 					Stats.Money -= Stats.UpgradeCosts["MaxCritter"];
-					Stats.MaxCrittersIncrease += 1;
 					Stats.UpgradeCosts["MaxCritter"] *= 10;
 
 					Button_Highlighted(sender, new RoutedEventArgs());
