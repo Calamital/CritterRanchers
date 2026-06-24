@@ -16,6 +16,7 @@ namespace CritterRanchers
 		public Vector2 Position;
 		public float DeltaTime, LastBounceTime;
 		public Image CritterIcon;
+		public bool Removed;
 		public int ID;
 
 		public Critter(string critterName, float speed, Vector2 direction, Vector2 position)
@@ -75,49 +76,52 @@ namespace CritterRanchers
 
 		public void TimeStep()
 		{
-			float xDistance = (Position.X + (30 * Direction.X) - Fence.XBound.X) / (40 * Fence.FenceSize);
-			float yDistance = (Position.Y + (30 * Direction.Y) - Fence.YBound.Y) / (40 * Fence.FenceSize);
-			float distanceToFence = Stats.EaseDistance(xDistance) * Stats.EaseDistance(yDistance);
-
-			int rng = new Random().Next(101);
-
-			DeltaTime += 1f / 60f;
-			LastBounceTime += 1f / 60f;
-
-			if (LastBounceTime >= 0.1f)
+			if (!Removed)
 			{
-				if ((Position.X <= Fence.XBound.X) || (Position.X >= Fence.XBound.Y))
+				float xDistance = (Position.X + (30 * Direction.X) - Fence.XBound.X) / (40 * Fence.FenceSize);
+				float yDistance = (Position.Y + (30 * Direction.Y) - Fence.YBound.Y) / (40 * Fence.FenceSize);
+				float distanceToFence = Stats.EaseDistance(xDistance) * Stats.EaseDistance(yDistance);
+
+				int rng = new Random().Next(101);
+
+				DeltaTime += 1f / 60f;
+				LastBounceTime += 1f / 60f;
+
+				if (LastBounceTime >= 0.1f)
 				{
-					Direction = new Vector2(-Direction.X, Direction.Y);
-					LastBounceTime = 0f;
+					if ((Position.X <= Fence.XBound.X) || (Position.X >= Fence.XBound.Y))
+					{
+						Direction = new Vector2(-Direction.X, Direction.Y);
+						LastBounceTime = 0f;
+					}
+					if ((Position.Y <= Fence.YBound.X) || (Position.Y >= Fence.YBound.Y))
+					{
+						Direction = new Vector2(Direction.X, -Direction.Y);
+						LastBounceTime = 0f;
+					}
 				}
-				if ((Position.Y <= Fence.YBound.X) || (Position.Y >= Fence.YBound.Y))
+
+				Position -= (ID == 7 ? MathF.Pow(MathF.Cos(LastBounceTime * MathF.PI), 2) : 1) * (float)Math.Max(0.2, distanceToFence) * (float)Math.Min(1 + (LastBounceTime / 5), 1.2) * Speed * Direction / 2f;
+
+				if (LastBounceTime >= 0.2f)
 				{
-					Direction = new Vector2(Direction.X, -Direction.Y);
-					LastBounceTime = 0f;
+					Direction += 1.25f * (1 - (distanceToFence * distanceToFence)) * new Vector2(Direction.Y, -Direction.X) * (0.5f + Math.Min(1, LastBounceTime)) * Speed / (MathF.Max(1, (Fence.FenceSize - 8) / 4) * (rng + 2000f));
+					Direction /= Direction.Length();
 				}
-			}
 
-			Position -= (ID == 7 ? MathF.Pow(MathF.Cos(LastBounceTime * MathF.PI), 2) : 1) * (float)Math.Max(0.2, distanceToFence) * (float)Math.Min(1 + (LastBounceTime / 5), 1.2) * Speed * Direction / 2f;
+				try
+				{
+					Canvas.SetLeft(CritterIcon, Position.X - 30 + PositionOffset().X);
+					Canvas.SetTop(CritterIcon, Position.Y - 30 + PositionOffset().Y);
+				}
+				catch { }
 
-			if (LastBounceTime >= 0.2f)
-			{
-				Direction += 1.25f * (1 - (distanceToFence * distanceToFence)) * new Vector2(Direction.Y, -Direction.X) * (0.5f + Math.Min(1, LastBounceTime)) * Speed / (MathF.Max(1, (Fence.FenceSize - 8) / 4) * (rng + 2000f));
-				Direction /= Direction.Length();
-			}
-
-			try
-			{
-				Canvas.SetLeft(CritterIcon, Position.X - 30 + PositionOffset().X);
-				Canvas.SetTop(CritterIcon, Position.Y - 30 + PositionOffset().Y);
-			}
-			catch { }
-
-			if (DeltaTime >= 1 - Stats.CritterCooldownReduction)
-			{
-				DeltaTime = 0;
-				Stats.Money += Stats.CritterMoney[ID] * Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier;
-				Critters.ProfitTexts.Add(CreateProfitText(), 0f);
+				if (DeltaTime >= 1 - Stats.CritterCooldownReduction)
+				{
+					DeltaTime = 0;
+					Stats.Money += Stats.CritterMoney[ID] * Stats.GlobalCritterProfit * Stats.CritterProfitMultiplier;
+					Critters.ProfitTexts.Add(CreateProfitText(), 0f);
+				}
 			}
 		}
 	}

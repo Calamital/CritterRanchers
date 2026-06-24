@@ -42,11 +42,11 @@ namespace CritterRanchers
 
 			window.Resize(new Windows.Graphics.SizeInt32(1600, 1000));
 
-			if (AppWindow.Presenter is OverlappedPresenter presenter)
-			{
-				presenter.IsResizable = false;
-				presenter.IsMaximizable = false;
-			}
+			//if (AppWindow.Presenter is OverlappedPresenter presenter)
+			//{
+			//	presenter.IsResizable = false;
+			//	presenter.IsMaximizable = false;
+			//}
 
 			CompositionTarget.Rendering += OnCompositionTargetRendering;
 
@@ -162,22 +162,28 @@ namespace CritterRanchers
 
 		private static async Task UpdateCritters(Microsoft.UI.Dispatching.DispatcherQueue dispatcher, CancellationToken cancel)
 		{
-			Stats.GlobalCritterProfit = 1 + (Stats.UpgradeAmounts["CritterProfit"][0] / 10d);
-			Stats.CritterProfitMultiplier = 1 + (Stats.UpgradeAmounts["CritterProfitMultiplier"][0] / 20d);
-			Stats.CritterCooldownReduction = Stats.UpgradeAmounts["CritterCooldown"][0] / 50d;
+			Stats.GlobalCritterProfit = 1 + (Stats.UpgradeAmounts["CritterProfit"][0] * 0.1d);
+			Stats.CritterProfitMultiplier = 1 + (Stats.UpgradeAmounts["CritterProfitMultiplier"][0] * 0.25d);
+			Stats.CritterCooldownReduction = Stats.UpgradeAmounts["CritterCooldown"][0] * 0.02d;
 			Stats.MaxCrittersIncrease = (int)Stats.UpgradeAmounts["MaxCritter"][0];
 			try
 			{
 				while (!cancel.IsCancellationRequested)
 				{
-					foreach (Critter critter in Critters.CritterList)
+					try
 					{
-						dispatcher.TryEnqueue(() =>
+						foreach (Critter critter in Critters.CritterList.ToList<Critter>())
 						{
-							critter.TimeStep();
-						});
+							dispatcher.TryEnqueue(() =>
+							{
+								critter.TimeStep();
+							});
+						}
 					}
-
+					catch (InvalidOperationException)
+					{
+						System.Diagnostics.Debug.WriteLine("Critter already deleted!");
+					}
 					try
 					{
 						foreach (KeyValuePair<TextBlock, float> profitText in Critters.ProfitTexts.ToList())
@@ -272,6 +278,7 @@ namespace CritterRanchers
 				if (critter.ID == critterID)
 				{
 					BackgroundCanvas.Children.Remove(critter.CritterIcon);
+					critter.Removed = true;
 					Critters.CritterList.Remove(critter);
 					Critters.CritterIDs.Remove(critter.ID);
 
@@ -318,7 +325,6 @@ namespace CritterRanchers
 					Stats.UpgradeAmounts["CritterProfit"][0]++;
 
 					Stats.Money -= Stats.UpgradeCosts["CritterProfit"];
-					Stats.GlobalCritterProfit += 0.1d;
 					Stats.UpgradeCosts["CritterProfit"] *= 1.5;
 
 					Button_Highlighted(sender, new RoutedEventArgs());
@@ -335,7 +341,6 @@ namespace CritterRanchers
 					Stats.UpgradeAmounts["CritterProfitMultiplier"][0]++;
 
 					Stats.Money -= Stats.UpgradeCosts["CritterProfitMultiplier"];
-					Stats.CritterProfitMultiplier += 0.25d;
 					Stats.UpgradeCosts["CritterProfitMultiplier"] *= 1.4;
 
 					Button_Highlighted(sender, new RoutedEventArgs());
@@ -352,7 +357,6 @@ namespace CritterRanchers
 					Stats.UpgradeAmounts["CritterCooldown"][0]++;
 
 					Stats.Money -= Stats.UpgradeCosts["CritterCooldown"];
-					Stats.CritterCooldownReduction += 0.02d;
 					Stats.UpgradeCosts["CritterCooldown"] *= 2.5;
 
 					Button_Highlighted(sender, new RoutedEventArgs());
@@ -405,7 +409,7 @@ namespace CritterRanchers
 					key = "CritterProfitMultiplier";
 					UpgradeDescriptionText.Text = $"Critter Profit Upgrade boost is multiplied by " +
 						$"{Stats.Abbreviate(Stats.CritterProfitMultiplier)}" +
-						$"x (+1.25x per level)";
+						$"x (+0.25x per level)";
 					break;
 				case "CritterCooldownUpgradeButton":
 					UpgradeTitle.Text = "Critter Cooldown Reduction";
