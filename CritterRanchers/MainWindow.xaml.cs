@@ -29,6 +29,7 @@ namespace CritterRanchers
 	public sealed partial class MainWindow : Window
 	{
 		public Canvas BackgroundCanvas => CanvasBackground;
+		public Canvas AscensionBackground => AscensionCanvas;
 		public string SelectedCritter = "";
 		public CancellationTokenSource cancelToken = new();
 		public bool GameLoaded = false;
@@ -83,6 +84,8 @@ namespace CritterRanchers
 					BuildTerrain();
 					Fence.BuildFence();
 					SetPositions();
+
+					MechanicalAscensionTree mechanicalAscensionTree = new();
 
 					await Task.Run(() => UpdateCritters(DispatcherQueue, cancelToken.Token));
 				}

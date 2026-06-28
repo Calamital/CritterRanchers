@@ -7,6 +7,7 @@ namespace CritterRanchers
 	internal static class Stats
 	{
 		public static double Money = 1d;
+		public static double Stars = 0d;
 		public static int MaxCritters = 0;
 		public static int CritterCount = 0;
 		public static double GlobalCritterProfit = 1d;
@@ -51,6 +52,7 @@ namespace CritterRanchers
 			["CritterCooldown"] = [0d, 20d],
 			["MaxCritter"] = [0d, 25d]
 		};
+		public static Dictionary<AscensionUpgrade, bool> AscensionUpgradeBuffs = [];
 
 		public static string Abbreviate(double n)
 		{

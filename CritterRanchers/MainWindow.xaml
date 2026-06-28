@@ -81,6 +81,20 @@
 					</Button>
 				</Border>
 
+				<Border x:Name="AscensionBorder"
+						Width="1600"
+						Height="1000"
+						Background="#903B3B3B"
+						Canvas.Top="0"
+						Canvas.Left="0"
+						Canvas.ZIndex="100">
+					<Canvas x:Name="AscensionCanvas"
+						Width="1600"
+						Height="1000">
+
+					</Canvas>
+				</Border>
+				
 				<Border x:Name="CritterCooldownUpgradeBorder"
 		Background="#2B2B2B"
 		Width="40"
